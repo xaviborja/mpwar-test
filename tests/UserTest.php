@@ -1,6 +1,6 @@
 <?php
 //include_once __DIR__ . '/../src/User.php';
-namespace Development;
+/*namespace Development;
 
 class UserTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,7 +11,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
 
     }*/
 
-    protected function setUp()
+    /*protected function setUp()
     {
         $this->user = new User();
     }
@@ -33,7 +33,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     /**
      * @depends testConnectDb
      */
-    public function testInsertUser( )
+    /*public function testInsertUser( )
     {
 
         $id_user = $this->user->insertUser("Xavi","12345");
@@ -48,11 +48,11 @@ class UserTest extends \PHPUnit_Framework_TestCase
     /**
      * @depends testInsertUser
      */
-    public function testGetUserData($id_user)
+    /*public function testGetUserData($id_user)
     {
         $user = $this->user->getUserData( $id_user );
         $this->assertArrayHasKey('user_name', $user);
         $this->assertArrayHasKey('password', $user);
         $this->assertArrayHasKey('num_actions', $user);
     }
-}
+}*/

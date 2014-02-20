@@ -7,4 +7,3 @@ env:
   -DB=mysql
 before_script:
   - mysql -e 'create database IF NOT EXISTS my_test;" -u root
-  - mysql -e "GRANT ALL ON my_test.* TO 'user_test'@'localhost'IDENTIFIED BY 'passtest';" -u root

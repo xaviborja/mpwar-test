@@ -83,7 +83,7 @@ class User
 
     public function connectDb()
     {
-        $pdo = new \PDO( 'mysql:host=127.0.0.1; dbname=my_test', 'user_test', 'passtest' );
+        $pdo = new \PDO( 'mysql:host=127.0.0.1; dbname=my_test', 'root', '' );
         return $pdo;
     }
 }
