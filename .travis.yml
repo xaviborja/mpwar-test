@@ -4,6 +4,6 @@ php:
   - "5.4"
   - "5.3"
 env:
-  -DB=mysql
+  - DB=mysql
 before_script:
   - mysql -e 'create database IF NOT EXISTS my_test;" -u root

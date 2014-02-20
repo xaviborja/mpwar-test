@@ -34,7 +34,7 @@ class User
     {
         $db = $this->connectDb();
         $rs = $db->query("SELECT user_name, password, num_actions FROM user WHERE id = $id_user");
-        return $rs->fetch_assoc();
+        return $rs->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -46,7 +46,7 @@ class User
     {
         $db = $this->connectDb();
         $db->query("INSERT INTO user(user_name, password, num_actions) VALUES ('$name', '$password', '0')");
-        return $db->insert_id;
+        return $db->lastInsertId;
     }
 
     /**
