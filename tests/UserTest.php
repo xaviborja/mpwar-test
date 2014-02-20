@@ -1,12 +1,13 @@
 <?php
-include_once __DIR__ . '/../src/User.php';
+//include_once __DIR__ . '/../src/User.php';
+namespace Development;
 
-class UserTest extends PHPUnit_Framework_TestCase
+class UserTest extends \PHPUnit_Framework_TestCase
 {
 
     protected function setUp()
     {
-        $this->user = new Users();
+        $this->user = new User();
     }
 
     public function testConnectDb()
@@ -21,7 +22,7 @@ class UserTest extends PHPUnit_Framework_TestCase
     /**
      * @depends testConnectDb
      */
-    public function testInsertUser(mysqli $db )
+    public function testInsertUser(\mysqli $db )
     {
         $id_user = $this->user->insertUser("Xavi","12345");
         if ($resultado = $db->query("SELECT user_name FROM user WHERE user_name='Xavi'")) {

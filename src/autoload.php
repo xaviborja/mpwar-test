@@ -1,9 +1,11 @@
 <?php
 spl_autoload_register(
-	function( $classname )
-	{
-		$classname =   '/' . $classname . ".php";
-		include $classname;
-		
-	}
+    function( $class_name )
+    {
+        if ( false !== strpos( $class_name, 'Development\\' ) )
+        {
+            var_dump( __DIR__ . '/' . str_replace( 'Development\\', '', $class_name ) . '.php' );
+            include __DIR__ . '/' . str_replace( 'Development\\', '', $class_name ) . '.php';
+        }
+    }
 );

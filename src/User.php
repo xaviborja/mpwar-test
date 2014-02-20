@@ -1,7 +1,7 @@
 <?php
+namespace Development;
 
-
-class Users
+class User
 {
     private $errors = array();
 
@@ -83,7 +83,7 @@ class Users
 
     public function connectDb()
     {
-        $mysqli = new mysqli('localhost', 'root', '', 'test');
+        $mysqli = new \mysqli('localhost', 'root', '', 'test');
         return $mysqli;
     }
 }
