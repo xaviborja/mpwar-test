@@ -5,11 +5,11 @@ namespace Development;
 class UserTest extends \PHPUnit_Framework_TestCase
 {
 
-    public static function setUpBeforeClass()
+    /*public static function setUpBeforeClass()
     {
         self::$db = new \mysqli('127.0.0.1', 'travis', '', 'my_test');
 
-    }
+    }*/
 
     protected function setUp()
     {
