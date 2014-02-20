@@ -82,7 +82,7 @@ class User
         {
             $this->errors[] = 'Password is required.';
         }
-        elseif ( $user_data['password'] < 6 && $user_data['password'] > 12 )
+        elseif ( strlen($user_data['password']) < 6 || strlen($user_data['password']) > 12 )
         {
             $this->errors[] = 'Password length must be between 6 and 12.';
         }
