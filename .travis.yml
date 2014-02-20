@@ -6,4 +6,4 @@ php:
 env:
   - DB=mysql
 before_script:
-  - mysql -e 'create database IF NOT EXISTS my_test;" -u root
+  - mysql -e "create database IF NOT EXISTS my_test;" -u root
