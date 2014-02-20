@@ -5,12 +5,23 @@ namespace Development;
 class UserTest extends \PHPUnit_Framework_TestCase
 {
 
+    public static function setUpBeforeClass()
+    {
+        self::$db = new \mysqli('127.0.0.1', 'travis', '', 'my_test');
+
+    }
+
     protected function setUp()
     {
         $this->user = new User();
     }
 
-    public function testConnectDb()
+    protected function tearDown()
+    {
+
+    }
+
+    /*public function testConnectDb()
     {
 
         $db = $this->user->connectDb();
@@ -22,10 +33,11 @@ class UserTest extends \PHPUnit_Framework_TestCase
     /**
      * @depends testConnectDb
      */
-    public function testInsertUser(\mysqli $db )
+    public function testInsertUser( )
     {
+
         $id_user = $this->user->insertUser("Xavi","12345");
-        if ($resultado = $db->query("SELECT user_name FROM user WHERE user_name='Xavi'")) {
+        if ($resultado = self::$db->query("SELECT user_name FROM user WHERE user_name='Xavi'")) {
             $obj = $resultado->fetch_object();
         }
         $this->assertEquals("Xavi", $obj->user_name);
