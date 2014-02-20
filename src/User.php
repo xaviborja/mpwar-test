@@ -83,7 +83,7 @@ class User
 
     public function connectDb()
     {
-        $mysqli = new \mysqli('127.0.0.1', 'travis', '', 'test');
+        $mysqli = new \mysqli('127.0.0.1', 'travis', '', 'my_test');
         return $mysqli;
     }
 }

@@ -4,7 +4,7 @@ php:
   - "5.4"
   - "5.3"
 before_script:
-  - mysql -e 'create database test; use test; CREATE TABLE `user` (
+  - mysql -e 'create database my_test; use my_test; CREATE TABLE `user` (
                                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                                 `user_name` varchar(255) NOT NULL,
                                                 `password` varchar(255) NOT NULL,
