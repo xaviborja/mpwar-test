@@ -43,4 +43,17 @@ class UserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testGetErrors()
+    {
+        $user_data = array('user_name' => 'Xavi', 'email' => 'test@test.com', 'password' => '14567', 'origin' => 'website');
+        try
+        {
+            $this->user->newUser( $user_data );
+        }
+        catch(\InvalidArgumentException $e )
+        {
+            $this->assertNotEmpty($this->user->getErrors());
+        }
+    }
+
 }
