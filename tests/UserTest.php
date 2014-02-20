@@ -1,58 +1,46 @@
 <?php
-//include_once __DIR__ . '/../src/User.php';
-/*namespace Development;
+namespace Development;
 
 class UserTest extends \PHPUnit_Framework_TestCase
 {
-
-    /*public static function setUpBeforeClass()
+    protected function setUp()
     {
-        self::$db = new \mysqli('127.0.0.1', 'travis', '', 'my_test');
+        $user_model = $this->getMock('UserModel', array('existsUserName','addNewUser'));
 
-    }*/
+        $user_model->expects($this->any())
+            ->method('existsUserName')
+            ->will($this->returnValue(false));
 
-    /*protected function setUp()
-    {
-        $this->user = new User();
-    }
+        $user_model->expects($this->any())
+            ->method('addNewUser')
+            ->will($this->returnValue(true));
 
-    protected function tearDown()
-    {
-
-    }
-
-    /*public function testConnectDb()
-    {
-
-        $db = $this->user->connectDb();
-        $this->assertInstanceOf('mysqli', $db);
-
-        return $db;
+        $service_provider = ServiceProvider::getInstance();
+        $service_provider->setService("UserModel",$user_model);
+        $this->user = new User($service_provider);
     }
 
     /**
-     * @depends testConnectDb
+     * @expectedException     \UnexpectedValueException
+     * @expectedExceptionCode 20
      */
-    /*public function testInsertUser( )
+    public function testNewUserInvalidOrigin()
     {
+        $user_data = array('user_name' => 'Xavi', 'email' => 'test@test.com', 'password' => '14111567', 'origin' => 'wesite');
 
-        $id_user = $this->user->insertUser("Xavi","12345");
-        if ($resultado = self::$db->query("SELECT user_name FROM user WHERE user_name='Xavi'")) {
-            $obj = $resultado->fetch_object();
-        }
-        $this->assertEquals("Xavi", $obj->user_name);
-
-        return $id_user;
+        $this->user->newUser( $user_data );
     }
 
     /**
-     * @depends testInsertUser
+     * @expectedException     \InvalidArgumentException
+     * @expectedExceptionMessage User data is invalid
      */
-    /*public function testGetUserData($id_user)
+    public function testNewUserException()
     {
-        $user = $this->user->getUserData( $id_user );
-        $this->assertArrayHasKey('user_name', $user);
-        $this->assertArrayHasKey('password', $user);
-        $this->assertArrayHasKey('num_actions', $user);
+        $user_data = array('user_name' => 'Xavi', 'email' => 'test@test.com', 'password' => '14567', 'origin' => 'website');
+
+        $this->user->newUser( $user_data );
+
     }
-}*/
+
+}

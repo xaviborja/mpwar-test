@@ -3,87 +3,151 @@ namespace Development;
 
 class User
 {
+    /**
+     * @var array
+     */
     private $errors = array();
 
-    public function newUser()
+    /**
+     * @var ServiceProvider
+     */
+    private $service_provider;
+
+    /**
+     * @param ServiceProvider $service_provider
+     */
+    public function __construct( $service_provider )
     {
-        if ( !empty( $_GET['user_name'] ) && !empty( $_GET['password'] ) )
+        $this->service_provider = $service_provider;
+    }
+
+    /**
+     * @param $user_data
+     * @throws \InvalidArgumentException
+     */
+    public function newUser( $user_data )
+    {
+        if ( $this->validateData( $user_data ) )
         {
-            $this->insertUser( $_GET['user_name'], $_GET['password'] );
+            // Check user origin.
+            $this->checkUserOrigin( $user_data );
+
+            // Create activation key.
+            $user_data['activation_key'] = md5( uniqid() );
+
+            // Insert user.
+            /* @var $user_model UserModel */
+            $user_model = $this->service_provider->getService( 'UserModel' );
+            $user_model->addNewUser( $user_data );
+
+            // Send email to user.
+            /* @var $mail_class Mail */
+            $mail_class = $this->service_provider->getService( 'Mail' );
+            $mail_class->setSender( $user_data['email'] );
+            $mail_class->setContent( 'Congrats! You are the most amazing new user of MPWAR Site!' );
+            $mail_class->send();
         }
         else
         {
-            if ( empty( $_GET['user_name'] ) )
-            {
-                $this->errors[] = 'Invalid User name';
-            }
-
-            if ( empty( $_GET['password'] ) )
-            {
-                $this->errors[] = 'Invalid Password';
-            }
+            throw new \InvalidArgumentException( 'User data is invalid' );
         }
     }
 
-
     /**
-     * Retorna la información de un usuario guardado en la base de datos. Si no existe lanza una excepción.
-     * @param $id_user
+     * @param $user_data
+     * @return bool
      */
-    public function getUserData( $id_user )
+    private function validateData( $user_data )
     {
-        $db = $this->connectDb();
-        $rs = $db->query("SELECT user_name, password, num_actions FROM user WHERE id = $id_user");
-        return $rs->fetchAll( \PDO::FETCH_ASSOC );
+        /* @var $user_model UserModel */
+        $user_model = $this->service_provider->getService( 'UserModel' );
+
+        // Check user name.
+        if ( empty( $user_data['user_name'] ) )
+        {
+            $this->errors[] = 'User name is required.';
+        }
+        elseif ( $user_model->existsUserName( $user_data['user_name'] ) )
+        {
+            $this->errors[] = 'User name already exists.';
+        }
+
+        // Check email.
+        if ( empty( $user_data['email'] ) )
+        {
+            $this->errors[] = 'Email is required.';
+        }
+
+        // Check Password.
+        if ( empty( $user_data['password'] ) )
+        {
+            $this->errors[] = 'Password is required.';
+        }
+        elseif ( $user_data['password'] < 6 && $user_data['password'] > 12 )
+        {
+            $this->errors[] = 'Password length must be between 6 and 12.';
+        }
+
+        return empty( $this->errors );
     }
 
     /**
-     * Inserta un usuario en la base de datos.
-     * @param $name
-     * @param $password
+     * @return array
      */
-    public function insertUser( $name, $password )
+    public function getErrors()
     {
-        $db = $this->connectDb();
-        $db->query("INSERT INTO user(user_name, password, num_actions) VALUES ('$name', '$password', '0')");
-        return $db->lastInsertId;
+        return $this->errors;
     }
 
     /**
-     * Inserta una acción en base de datos.
-     * @param $action
+     * @param array $user_data
+     * @return array
+     * @throws \UnexpectedValueException
      */
-    public function insertUserAction( $action )
+    private function checkUserOrigin( $user_data )
     {
-        $db = $this->connectDb();
-        $db->query("INSERT INTO user(user_name, password, num_actions) VALUES ('$name', '$password', '0')");
+        switch( $user_data['origin'] )
+        {
+            case 'website':
+                break;
+            case 'facebook':
+                $user_data = $this->facebookUser( $user_data );
+
+                break;
+            default:
+                $this->errors[] = 'Invalid user origin';
+                throw new \UnexpectedValueException( 'Invalid user origin', 20 );
+        }
+
+        return $user_data;
     }
 
     /**
-     * Retorna un array de acciones. Si el usuario no tiene acciones retorna vacío.
-     * @param $action
+     * @param array $user_data
+     * @return array
      */
-    public function getUserActions( $action )
+    private function facebookUser( $user_data )
     {
+        /* @var $facebook_adapter FacebookAdapter */
+        $facebook_adapter = $this->service_provider->getService( 'FacebookAdapter' );
 
-    }
+        $facebook_user_data = $facebook_adapter->getFacebookData( $user_data[ 'email' ] );
 
-    /**
-     * Nos devuelve el karma del usuario en función del número de acciones realizadas.
-     * - Entre 0 y 10 -> devuelve 1
-     * - Mayor que 10 y menor 100 -> devuelve 2
-     * - Mayor de 100 y menor de 500 -> devuelve 3
-     * - Mayor de 500 -> devuelve número de acciones entre 100
-     * @param $id_user
-     */
-    public function getUserKarma( $id_user )
-    {
+        if ( $facebook_user_data[ 'valid_token' ] )
+        {
+            switch( $facebook_adapter->getPrivacityLevel( $facebook_user_data[ 'email' ] ) )
+            {
+                case FacebookAdapter::ALL:
+                    $user_data = array_merge( $user_data, $facebook_user_data );
+                    break;
+                case FacebookAdapter::MEDIUM:
+                    $user_data['profile_picture'] = $facebook_user_data['profile_picture'];
+                    break;
+                case FacebookAdapter::DENIED:
+                    break;
+            }
+        }
 
-    }
-
-    public function connectDb()
-    {
-        $pdo = new \PDO( 'mysql:host=127.0.0.1; dbname=my_test', 'root', '' );
-        return $pdo;
+        return $user_data;
     }
 }
