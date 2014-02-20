@@ -61,7 +61,7 @@ class User
     {
         /* @var $user_model UserModel */
         $user_model = $this->service_provider->getService( 'UserModel' );
-
+        var_dump($user_model->existsUserName());
         // Check user name.
         if ( empty( $user_data['user_name'] ) )
         {
@@ -77,7 +77,6 @@ class User
         {
             $this->errors[] = 'Email is required.';
         }
-
         // Check Password.
         if ( empty( $user_data['password'] ) )
         {
@@ -87,7 +86,7 @@ class User
         {
             $this->errors[] = 'Password length must be between 6 and 12.';
         }
-
+        var_dump($this->errors);
         return empty( $this->errors );
     }
 
