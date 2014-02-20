@@ -5,11 +5,6 @@ namespace Development;
 class UserTest extends \PHPUnit_Framework_TestCase
 {
 
-    public static function setUpBeforeClass()
-    {
-        fwrite(STDOUT, __METHOD__ . "\n");
-    }
-
     protected function setUp()
     {
         $this->user = new User();
